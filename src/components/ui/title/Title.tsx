@@ -8,7 +8,7 @@ interface Props {
 
 export default function Title({ title, subtitle, className }: Props) {
   return (
-    <div className={`mt-3 ${className}`}>
+    <div className={`mt-3 ${className} ml-6`}>
       <h1 className={`${titleFont.className} antialiased text-4xl font-semibold my-6`}>
         {title}
       </h1>
