@@ -1,17 +1,14 @@
-'use client'
-
 import type { Size } from "@/interfaces/product.interface"
-import { useState } from "react";
 import clsx from "clsx";
 
 interface Props {
-  selecterSize: Size;
+  selecterSize?: Size;
   availableSize: Size[];
+  onSizeChange: (size: Size) => void
 }
 
-export default function SizeSelector({ selecterSize, availableSize }: Props) {
+export default function SizeSelector({ selecterSize, availableSize, onSizeChange }: Props) {
 
-  const [currentSizeSelector, setCurrentSizeSelector] = useState(selecterSize)
 
   return (
     <div className="my-5 ">
@@ -21,13 +18,13 @@ export default function SizeSelector({ selecterSize, availableSize }: Props) {
         {
           availableSize.map( size => (
             <button
-              onClick={() => setCurrentSizeSelector(size)}
+              onClick={() => onSizeChange(size)}
               key={size}
               className={
                 clsx(
                   "mx-2 hover:bg-blue-200 w-10 h-10 p-1 rounded-full text-lg transition-all duration-200",
                   {
-                    'bg-blue-200': currentSizeSelector === size
+                    'bg-blue-600 text-white': selecterSize === size
                   }
               )}
             >

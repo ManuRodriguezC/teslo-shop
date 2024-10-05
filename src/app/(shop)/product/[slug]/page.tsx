@@ -1,10 +1,34 @@
-import QuantitySelector from "@/components/product/quantity-selector/QuantitySelector"
-import SizeSelector from "@/components/product/size-selector/SizeSelector"
+export const revalidate = 604800
+
+import { getProductBySlog } from "@/app/actions/products/get-product-by-slug"
 import SliceShowMovil from "@/components/product/slideshow/ProductMovileSliceShow"
 import SliceShow from "@/components/product/slideshow/ProductSliceShow"
+import StockLabel from "@/components/product/stock-label/StockLabel"
 import { titleFont } from "@/config/fonts"
-import { initialData } from "@/seed/seed"
+import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import AddToCard from "./ui/AddToCart"
+
+export async function generateMetadata(
+  { params }: Props,
+  // parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const slug = params.slug
+ 
+  // fetch data
+  const product = await getProductBySlog(slug)
+ 
+  return {
+    title: product?.title ?? 'Producto no ecnontrado',
+    description: product?.description ?? '',
+    openGraph: {
+      title: product?.title ?? 'Producto no ecnontrado',
+      description: product?.description ?? '',
+      images: [`/products/${product?.images[1]}`],
+    },
+  }
+}
 
 interface Props {
   params: {
@@ -12,9 +36,10 @@ interface Props {
   }
 }
 
-export default function ProductPage({ params }: Props) {
+export default async function ProductPage({ params }: Props) {
   const { slug } = params
-  const product = initialData.products.find(product => product.slug === slug)
+
+  const product = await getProductBySlog(slug)
 
   if (!product) notFound()
 
@@ -40,21 +65,15 @@ export default function ProductPage({ params }: Props) {
 
       {/* Detalles */}
       <div className="col-span-1 px-5 ">
+
+        <StockLabel slug={slug}/>
+
         <h1 className={`${titleFont.className} antialiased font-bold text-3xl`}>
           {product.title}
         </h1>
         <p className="text-3xl my-5">${product.price}</p>
 
-        {/* Selector de Tallas */}
-        <SizeSelector availableSize={product.sizes} selecterSize={product.sizes[0]} />
-
-        {/* Selector de cantidad */}
-        <QuantitySelector quantity={1} />
-
-        {/* Boton */}
-        <button className="btn-primary my-5">
-          Agregar al carrito
-        </button>
+        <AddToCard product={product} />
 
         {/* Description */}
         <h3 className="font-bold text-sm">Description</h3>
